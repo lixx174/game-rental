@@ -8,10 +8,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class Game {
+public class Game extends Entity{
 
-    private String id;
     private GameType type;
+
     private String name;
+
     private String logo;
 }
