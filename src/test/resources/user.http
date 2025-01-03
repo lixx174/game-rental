@@ -1,0 +1,10 @@
+### user add
+POST http://localhost:8080/user/create
+Content-Type: application/json
+
+{
+  "name": "zs",
+  "sex": "",
+  "mobile": "13565655452",
+  "birthday": "2020-10-10"
+}
