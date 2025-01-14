@@ -33,7 +33,7 @@ public class DefaultAccountRepository implements AccountRepository {
                         .eq(AccountEntity::getMobile, mobile)
         );
 
-        if(accountDo == null){
+        if (accountDo == null) {
             return Optional.empty();
         }
         return Optional.of(
@@ -50,7 +50,6 @@ public class DefaultAccountRepository implements AccountRepository {
     public void save(@NonNull Account account) {
         target.insert(converter.convert(account));
     }
-
 
     @Mapper
     interface AccountMapper extends BaseMapper<AccountEntity> {

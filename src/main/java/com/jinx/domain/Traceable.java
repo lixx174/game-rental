@@ -3,5 +3,5 @@ package com.jinx.domain;
 /**
  * @author Jinx
  */
-public interface Traceable{
+public interface Traceable {
 }

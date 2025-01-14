@@ -37,15 +37,19 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-authorization-server'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+    // there is an issue that safe-bug in spring-jdbc 6.1.12
+    // https://github.com/spring-projects/spring-framework/issues/33708
     implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.9'
+
+    compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    annotationProcessor 'org.projectlombok:lombok'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 

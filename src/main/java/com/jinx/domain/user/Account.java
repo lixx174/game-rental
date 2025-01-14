@@ -10,7 +10,7 @@ import org.springframework.util.Assert;
  * @author Jinx
  */
 @Getter
-public class Account{
+public class Account {
 
     private final String id;
     private Mobile mobile;

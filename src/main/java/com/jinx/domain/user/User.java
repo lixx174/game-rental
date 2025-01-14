@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * @author Jinx
  */
 @Getter
-public class User{
+public class User {
 
     private final String id;
     private String name;
@@ -38,7 +38,7 @@ public class User{
     }
 
     /**
-     * FIXME How to check the name is valid and is unique? Deliver the repo from outside.
+     * FIXME How to check the name is valid and is unique? Deliver the repo from outside?
      *
      * @param name latest user name
      */

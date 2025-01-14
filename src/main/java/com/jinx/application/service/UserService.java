@@ -28,7 +28,7 @@ public class UserService {
     public void save(UserCreateCommand command) {
         Mobile mobile = new Mobile(command.getMobile());
         Assert.isTrue(
-                accountRepo.findByMobile(mobile).isPresent(),
+                accountRepo.findByMobile(mobile).isEmpty(),
                 "mobile [%s] already existed!".formatted(mobile)
         );
 
@@ -45,7 +45,9 @@ public class UserService {
                 Status.ENABLE
         );
 
+        // FIXME aggregate to save?
         accountRepo.save(account);
         userRepo.save(user);
+        // TODO role and permission
     }
 }
