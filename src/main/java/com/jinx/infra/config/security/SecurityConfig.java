@@ -1,9 +1,12 @@
 package com.jinx.infra.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jinx.AppConfiguration;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,7 +14,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.session.DisableEncodeUrlFilter;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.util.AntPathMatcher;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -20,17 +24,32 @@ import static org.springframework.security.config.Customizer.withDefaults;
  */
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+@Import(AntPathMatcher.class)
+public class SecurityConfig implements RequestMatcher {
 
-    private final GatewayFilter gatewayFilter;
     private final ObjectMapper om;
+    private final AppConfiguration configuration;
+    private final AntPathMatcher matcher;
+
+    @Override
+    public boolean matches(HttpServletRequest request) {
+        String ipPattern = request.getRemoteAddr();
+        String pathPattern = request.getRequestURI();
+        AppConfiguration.Whitelist whitelist = configuration.getWhitelist();
+
+        return whitelist.getIps().stream().anyMatch(ip -> matcher.match(ip, ipPattern))
+                || whitelist.getPaths().stream().anyMatch(path -> matcher.match(path, pathPattern));
+    }
 
     @Bean
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         return http
                 // 这里控制的是 AuthorizationFilter，仅仅针对这一个拦截器
                 // 所以这里配置的放行，也是会经过 defaultSecurityFilterChain 这个拦截器链的
-                .authorizeHttpRequests(request -> request.anyRequest().authenticated())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(this).permitAll()
+                        .anyRequest().authenticated()
+                )
                 .httpBasic(withDefaults())
                 .formLogin(configurer -> configurer
                         .failureHandler((request, response, exception) -> {
@@ -50,15 +69,11 @@ public class SecurityConfig {
                                 )
                         )
                 )
-                // 将路由拦截器放第一个 这样避免使用webSecurity创建过多的chain
-                // 同时 在第一个放行 避免性能损耗（但是 其大多都是OncePerRequestFilter，损耗不严重）
                 // FilterOrderRegistration 配置了拦截器的默认顺序
-                .addFilterBefore(gatewayFilter, DisableEncodeUrlFilter.class)
                 .csrf(CsrfConfigurer::disable)
                 .cors(CorsConfigurer::disable)
                 .build();
     }
-
 
     /**
      * Web security build callback.
@@ -67,8 +82,10 @@ public class SecurityConfig {
      * 因为 FilterChainProxy 在获取 FilterChain 时是根据 matcher来获取的，然后获取其中的filters进行控制，因为是空的所以直接放行。
      *
      * @return callback
+     * @deprecated 该配置会增加 SecurityFilterChain 拦截器链的数量
      */
 //    @Bean
+    @Deprecated
     public WebSecurityCustomizer webSecurityCustomizer() {
         // webSecurity includes many httpSecurity filters
         // all httpSecurity filters will be ignored if the web is ignored
