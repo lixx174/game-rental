@@ -45,6 +45,8 @@ dependencies {
     // https://github.com/spring-projects/spring-framework/issues/33708
     implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.9'
 
+    implementation 'org.apache.rocketmq:rocketmq-spring-boot-starter:2.3.2'
+
     compileOnly 'org.projectlombok:lombok'
 
     runtimeOnly 'com.mysql:mysql-connector-j'

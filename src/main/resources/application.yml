@@ -16,14 +16,21 @@ mybatis-plus:
     db-config:
       id-type: ASSIGN_ID
 
-security:
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: game_rental_producer_group
+
+
+system:
   whitelist:
     ips:
-    #      - 127.0.0.1
-    #      - 0:0:0:0:0:0:0:1
+#      - 127.0.0.1
+#      - 0:0:0:0:0:0:0:1
     paths:
       - /error
       - /favicon.ico
+      - /user/create
 
 
 

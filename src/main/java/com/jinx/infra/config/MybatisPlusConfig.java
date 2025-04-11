@@ -3,7 +3,7 @@ package com.jinx.infra.config;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.jinx.infra.SecuritySupport;
+import com.jinx.application.UserContext;
 import com.jinx.infra.persistence.AuditEntity;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.type.LocalDateTimeTypeHandler;
@@ -36,13 +36,13 @@ public class MybatisPlusConfig implements MetaObjectHandler, InitializingBean {
     @Override
     public void insertFill(MetaObject metaObject) {
         strictInsertFill(metaObject, createAt, LocalDateTime::now, LocalDateTime.class);
-        strictInsertFill(metaObject, createBy, SecuritySupport::getUserIdOrDefault, String.class);
+        strictInsertFill(metaObject, createBy, UserContext::getUserId, String.class);
     }
 
     @Override
     public void updateFill(MetaObject metaObject) {
         strictUpdateFill(metaObject, updateAt, LocalDateTime::now, LocalDateTime.class);
-        strictUpdateFill(metaObject, updateBy, SecuritySupport::getUserIdOrDefault, String.class);
+        strictUpdateFill(metaObject, updateBy, UserContext::getUserId, String.class);
     }
 
     @Override
